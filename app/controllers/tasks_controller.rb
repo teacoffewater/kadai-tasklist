@@ -2,18 +2,23 @@ class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy]
   
   def index
-    @tasks = Task.all
+    if logged_in?
+    @tasks = current_user.Tasks.order(id: :desc)
+    end
   end
 
   def show
   end
 
   def new
-    @task = Task.new
+    if logged_in?
+    @tasks = current_user.Task.build
+    end
   end
 
   def create
-  @task = Task.new(task_params)
+  @task = Tasks.new(content: params[:content],status: params[:status],user_id: @current_user.id)
+  
     if @task.save
       flash[:success] = 'タスクが正常に登録されました'
       redirect_to @task
